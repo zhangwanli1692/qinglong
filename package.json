@@ -1,11 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "start": "concurrently -n w: npm:start:*",
-    "start:back": "nodemon ./back/app.ts",
-    "start:front": "max dev",
+    "build": "npm run build:front && npm run build:back",
     "build:front": "max build",
     "build:back": "tsc -p back/tsconfig.json",
+    "start": "node --require ts-node/register ./back/app.ts",  // ✅ 核心：只启动后端，单进程
     "panel": "npm run build:back && node static/build/app.js",
     "gen:proto": "protoc --experimental_allow_proto3_optional --plugin=./node_modules/.bin/protoc-gen-ts_proto ./back/protos/*.proto --ts_proto_out=./ --ts_proto_opt=outputServices=grpc-js,env=node,esModuleInterop=true,snakeToCamel=false",
     "gen:api": "python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. ./back/protos/api.proto",
@@ -13,7 +12,8 @@
     "postinstall": "max setup 2>/dev/null || true",
     "test": "umi-test",
     "test:coverage": "umi-test --coverage"
-  },
+  }
+},
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
